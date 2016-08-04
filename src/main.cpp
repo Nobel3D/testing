@@ -1,6 +1,6 @@
 #include <iostream>
 #include <time.h>
-#include "../../src/NBL.h"
+#include <NBL.h>
 
 #define DEBUG 1
 
@@ -24,12 +24,14 @@ void checkup(char* checkname, bool expression)
 
 void result()
 {
+    cout << endl << endl;
     cout << "Number of test Passed: " << numTests - numFails << endl;
     cout << "Number of test Failed: " << numFails << endl;
     cout << "Number of test Executed: " << numTests << endl;
     if(numFails == 0)
-        cout << "All seems OK... but you can check https://github.com/Nobel3D/Nobel-Library to help me, it would be great! :D";
+        cout << "All seems OK... but you can check https://github.com/Nobel3D/Nobel-Library to help me, it would be great! :D" << endl;
 }
+
 
 int main()
 {
@@ -53,6 +55,23 @@ int main()
         othernumber[i] = i + 10;
     numbers.Copy(othernumber);
     checkup("Array copying", numbers[3] == 13);
+    List<int> listed;
+    for(int i = 0; i < 10 ; i++)
+        listed.addItem(i);
+    checkup("List allocation", listed[9] == 9);
+
+    listed[9] = 99;
+    checkup("List modify", listed[9] == 99);
+
+    checkup("List get length", listed.getLength() == 10);
+
+    checkup("List find by object", listed.findByObject(6)->list_lData == 6);
+
+    Array<int> listarray = listed.toArray();
+    checkup("List to array", listarray[6] = 6);
+
+   listed.Clear();
+    checkup("List cleaning", listed[0] == NULL);
 
     NString hello = "Hello";
     checkup("NString allocation", hello=="Hello");
@@ -60,27 +79,28 @@ int main()
     hello += " world";
     checkup("NString adding", hello=="Hello world");
 
-    cout << hello.Replace("world", "guys") << endl;
-
     checkup("NString replace", hello.Replace("world", "guys") == "Hello guys");
 
     checkup("NString find", hello.Find("wor"));
 
-    List<NString>* strList = new List<NString>; hello.Split(" ", strList);
-    Array<NString>* space = strList->toArray();
+    List<NString>* strList = hello.Split(" ");
+    Array<NString>* space = new Array<NString>(strList->toArray());
     checkup("NString split", (*space)[0] == "Hello" && (*space)[1] == "world");
-    cout << (*space)[0] << " " << (*space)[1] << endl;
+
+    checkup("NString check Numbers", NString("123").chk_Number());
+
+    checkup("NString integer to binary",  NString::toBinary(200) == NString("11001000"));
+    checkup("NString integer to hexadecimal",  NString::toHex(200) == NString("C8"));
+    checkup("NString integer to string", NString::fromInt(200) == NString("200"));
+
+    cout << NString::toHex(time(0));
+
 
     result();
     return 0;
     #else // DEBUG
-    Array<NString> array(10);
-    for(int i = 10; i < 10; i++)
-    {
-        array[i] = "ciao kek";
-        cout << array[i] << endl;
-    }
 
     return 0;
     #endif // DEBUG
 }
+
