@@ -35,13 +35,15 @@ void result()
 
 int main()
 {
-    #if DEBUG == 1
+#if DEBUG == 1
     Array<int> numbers(10);
     for(int i = 0; i < 10 ; i++)
         numbers[i] = i;
     checkup("Array allocation", numbers[0] == 0 && numbers[5] == 5 && numbers[9] == 9);
 
-    numbers.Expand(12); numbers[10] = 10; numbers[11] = 11;
+    numbers.Expand(12);
+    numbers[10] = 10;
+    numbers[11] = 11;
     checkup("Array adding", numbers[10] == 10 && numbers[11] == 11);
 
     numbers[1] = 99;
@@ -67,11 +69,11 @@ int main()
 
     checkup("List find by object", listed.findByObject(6)->list_lData == 6);
 
-    Array<int> listarray = listed.toArray();
-    checkup("List to array", listarray[6] = 6);
+    Array<int>* listarray = listed.toArray();
+    checkup("List to array", (*listarray)[6] = 6);
 
-   listed.Clear();
-    checkup("List cleaning", listed[0] == NULL);
+    listed.Clear();
+    checkup("List cleaning", listed[0] != 0);
 
     NString hello = "Hello";
     checkup("NString allocation", hello=="Hello");
@@ -84,7 +86,7 @@ int main()
     checkup("NString find", hello.Find("wor"));
 
     List<NString>* strList = hello.Split(" ");
-    Array<NString>* space = new Array<NString>(strList->toArray());
+    Array<NString>* space = strList->toArray();
     checkup("NString split", (*space)[0] == "Hello" && (*space)[1] == "world");
 
     checkup("NString check Numbers", NString("123").chk_Number());
@@ -93,14 +95,23 @@ int main()
     checkup("NString integer to hexadecimal",  NString::toHex(200) == NString("C8"));
     checkup("NString integer to string", NString::fromInt(200) == NString("200"));
 
-    cout << NString::toHex(time(0));
+    NFile writefile("file.txt");
+    writefile.Open(Writing);
+    writefile << "somethings happened :D";
+    writefile.Close();
 
+    NString reading;
+    NFile readfile("file.txt");
+    readfile.Open(Reading);
+    readfile >>  reading;
+    readfile.Close();
+    checkup("NFile write/read operations", reading == "somethings happened :D");
 
     result();
     return 0;
-    #else // DEBUG
+#else // DEBUG
 
     return 0;
-    #endif // DEBUG
+#endif // DEBUG
 }
 
